@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class CameraSwitcher : MonoBehaviour
 {
-    [Tooltip("Assign at least 3 cameras. Only the active one will be enabled.")]
+    [Tooltip("Assign cameras. Only the active one will be enabled.")]
     public Camera[] cameras;
     public int activeIndex = 0;
     public KeyCode switchKey = KeyCode.C;

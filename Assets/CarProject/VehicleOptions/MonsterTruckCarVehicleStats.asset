@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: MonsterTruckCarVehicleStats
   m_EditorClassIdentifier: 
   displayName: Vehicle
-  maxSpeedKmh: 40
+  maxSpeedKmh: 70
   baseMotorTorque: 3500
   steerSpeed: 25
   brakeTorque: 2000
@@ -25,14 +25,14 @@ MonoBehaviour:
       time: 0
       value: 1
       inSlope: 0
-      outSlope: -1.5
+      outSlope: 0
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 0.3
-      value: 0.75
+      time: 0.30000004
+      value: 0.85857683
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -40,22 +40,22 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 0.7
-      value: 0.35
-      inSlope: 0
-      outSlope: 0
+      time: 0.66999996
+      value: 0.6859095
+      inSlope: -0.23181728
+      outSlope: -0.23181728
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0
+      outWeight: 0.96882117
     - serializedVersion: 3
-      time: 1
-      value: 0.1
-      inSlope: 0
-      outSlope: 0
+      time: 1.0213213
+      value: 0.2675604
+      inSlope: -4.048833
+      outSlope: -4.048833
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0
+      inWeight: 0.09185768
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2

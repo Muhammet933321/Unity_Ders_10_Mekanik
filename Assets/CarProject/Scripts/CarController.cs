@@ -4,105 +4,135 @@ using UnityEngine;
 public class CarController : MonoBehaviour
 {
     [Header("Wheel Colliders")]
-    public WheelCollider rightFrontWhell, leftFrontWhell, rightBackWhell, leftBackWhell;
+    [Tooltip("WheelCollider components for front/back, left/right wheels")]
+    public WheelCollider rightFrontWheel, leftFrontWheel, rightBackWheel, leftBackWheel;
 
-    [Header("Vehicle Variants")]
+    [Header("Vehicle Options")]
+    [Tooltip("Different vehicle setups (speed, torque, drivetrain etc.)")]
     public VehicleStats[] vehicleOptions;
-    [Tooltip("Index of the active vehicle in vehicleOptions")] public int selectedIndex = 0;
+
+    [Tooltip("Index of the currently active vehicle in the array")]
+    public int selectedIndex = 0;
 
     Rigidbody rb;
-    float horizontalInput, verticalInput;
 
-    VehicleStats ActiveStats
-    {
-        get
-        {
-            if (vehicleOptions != null && vehicleOptions.Length > 0)
-            {
-                int i = Mathf.Clamp(selectedIndex, 0, vehicleOptions.Length - 1);
-                return vehicleOptions[i];
-            }
-            return null;
-        }
-    }
+    float horizontalInput; 
+    float verticalInput;   
+
+    VehicleStats activeStats;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        rb.centerOfMass = new Vector3(0, -0.3f, 0); // a little stability
+
+        // aracin stabilitesi icin agırlık merkezini asagıya cekiyoruz
+        rb.centerOfMass = new Vector3(0f, -0.3f, 0f);
     }
 
     void Update()
     {
-        // Basic input
+        ReadPlayerInput();
+        HandleVehicleSwitchInput();
+    }
+
+    void ReadPlayerInput()
+    {
         horizontalInput = Input.GetAxis("Horizontal");
         verticalInput = Input.GetAxis("Vertical");
+    }
 
-        // Quick switch between two vehicles with keys 1 and 2 (if present)
-        if (Input.GetKeyDown(KeyCode.Alpha1)) selectedIndex = 0;
-        if (Input.GetKeyDown(KeyCode.Alpha2)) selectedIndex = 1;
+    // Arac ozellikleri arasinda gecis yap
+    void HandleVehicleSwitchInput()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+            selectedIndex = 0;
+
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+            selectedIndex = 1;
     }
 
     void FixedUpdate()
     {
-        var stats = ActiveStats;
-        if (stats == null) return;
+        activeStats = vehicleOptions[selectedIndex];
+        if (activeStats == null) return; 
 
-        float speed = rb.linearVelocity.magnitude; // m/s
-        float maxSpeed = Mathf.Max(1f, stats.MaxSpeedMS);
+        // metre / saniye hizimiz
+        float currentSpeed = rb.linearVelocity.magnitude;
+        float maxSpeed = activeStats.MaxSpeedMS;
 
-        // Evaluate acceleration factor (strong at low speed, weaker near max)
-        float accelFactor = stats.EvaluateAccelFactor(speed);
+        // Higher acceleration at low speed, lower near max speed
+        float accelFactor = activeStats.EvaluateAccelFactor(currentSpeed);
 
-        // Compute desired motor torque based on input and curve
-        float desiredTorque = stats.baseMotorTorque * verticalInput * accelFactor;
+        // Desired motor torque based on input and curve
+        float desiredMotorTorque = activeStats.baseMotorTorque * verticalInput * accelFactor;
 
-        // Respect forward max speed
-        if (verticalInput > 0f && speed >= maxSpeed)
+        // When going forward and already at max speed, cut extra torque
+        if (verticalInput > 0f && currentSpeed >= maxSpeed)
         {
-            desiredTorque = 0f;
+            desiredMotorTorque = 0f;
         }
 
-        // Simple braking (Space)
-        bool braking = Input.GetKey(KeyCode.Space);
-        float brake = braking ? stats.brakeTorque : 0f;
+        // Simple braking (Space key)
+        float brakeTorque;
+        if (Input.GetKey(KeyCode.Space))
+            brakeTorque = activeStats.brakeTorque;
+        else
+            brakeTorque = 0;
 
-        // Apply steering (front wheels)
-        float steer = stats.steerSpeed * horizontalInput;
-        rightFrontWhell.steerAngle = steer;
-        leftFrontWhell.steerAngle = steer;
+        ApplySteering();
+        ApplyBrakes(brakeTorque);
+        ApplyDriveTorque(desiredMotorTorque);
+        ApplyDownforce(currentSpeed);
+    }
+    // Apply steering angle only to front wheels
+    void ApplySteering()
+    {
+        float steerAngle = activeStats.steerSpeed * horizontalInput;
+        rightFrontWheel.steerAngle = steerAngle;
+        leftFrontWheel.steerAngle = steerAngle;
+    }
 
-        // Reset torques
-        rightFrontWhell.brakeTorque = brake;
-        leftFrontWhell.brakeTorque = brake;
-        rightBackWhell.brakeTorque = brake;
-        leftBackWhell.brakeTorque = brake;
+    // Apply brake torque to all wheels
+    void ApplyBrakes(float brakeTorque)
+    {
+        rightFrontWheel.brakeTorque = brakeTorque;
+        leftFrontWheel.brakeTorque = brakeTorque;
+        rightBackWheel.brakeTorque = brakeTorque;
+        leftBackWheel.brakeTorque = brakeTorque;
+    }
 
-        rightFrontWhell.motorTorque = 0f;
-        leftFrontWhell.motorTorque = 0f;
-        rightBackWhell.motorTorque = 0f;
-        leftBackWhell.motorTorque = 0f;
+    // Distribute motor torque to wheels based on drive type
+    void ApplyDriveTorque(float desiredMotorTorque)
+    {
+        // Önce tüm motor torklarını sıfırla
+        rightFrontWheel.motorTorque = 0f;
+        leftFrontWheel.motorTorque = 0f;
+        rightBackWheel.motorTorque = 0f;
+        leftBackWheel.motorTorque = 0f;
 
-        // Drivetrain distribution
-        switch (stats.driveType)
+        switch (activeStats.driveType)
         {
-            case VehicleStats.DriveType.FWD:
-                rightFrontWhell.motorTorque = desiredTorque * 0.5f;
-                leftFrontWhell.motorTorque = desiredTorque * 0.5f;
+            case VehicleStats.DriveType.FWD: // onden cekis
+                rightFrontWheel.motorTorque = desiredMotorTorque * 0.5f;
+                leftFrontWheel.motorTorque = desiredMotorTorque * 0.5f;
                 break;
-            case VehicleStats.DriveType.RWD:
-                rightBackWhell.motorTorque = desiredTorque * 0.5f;
-                leftBackWhell.motorTorque = desiredTorque * 0.5f;
+
+            case VehicleStats.DriveType.RWD: // Arkadan itis
+                rightBackWheel.motorTorque = desiredMotorTorque * 0.5f;
+                leftBackWheel.motorTorque = desiredMotorTorque * 0.5f;
                 break;
-            case VehicleStats.DriveType.AWD:
-                rightFrontWhell.motorTorque = desiredTorque * 0.25f;
-                leftFrontWhell.motorTorque = desiredTorque * 0.25f;
-                rightBackWhell.motorTorque = desiredTorque * 0.25f;
-                leftBackWhell.motorTorque = desiredTorque * 0.25f;
+
+            case VehicleStats.DriveType.AWD: // 4x4
+                rightFrontWheel.motorTorque = desiredMotorTorque * 0.25f;
+                leftFrontWheel.motorTorque = desiredMotorTorque * 0.25f;
+                rightBackWheel.motorTorque = desiredMotorTorque * 0.25f;
+                leftBackWheel.motorTorque = desiredMotorTorque * 0.25f;
                 break;
         }
+    }
 
-        // Add simple downforce proportional to speed for stability on hills
-        rb.AddForce(-transform.up * stats.downforce * speed, ForceMode.Force);
+    void ApplyDownforce(float currentSpeed)
+    {
+        rb.AddForce(-transform.forward * activeStats.downforce * currentSpeed);
     }
 }
