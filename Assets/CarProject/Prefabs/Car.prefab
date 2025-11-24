@@ -255,10 +255,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d2054590a83882418593670f79f2339, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rightFrontWhell: {fileID: 8630804556581770747}
-  leftFrontWhell: {fileID: 8223853091041992327}
-  rightBackWhell: {fileID: 4452605877542929359}
-  leftBackWhell: {fileID: 1560231366168925598}
+  rightFrontWheel: {fileID: 8630804556581770747}
+  leftFrontWheel: {fileID: 8223853091041992327}
+  rightBackWheel: {fileID: 4452605877542929359}
+  leftBackWheel: {fileID: 1560231366168925598}
   vehicleOptions:
   - {fileID: 11400000, guid: 99a9f72acb762f14db349644539a02c0, type: 2}
   - {fileID: 11400000, guid: 4af9702a79c461c4e9ab34a49145151b, type: 2}
