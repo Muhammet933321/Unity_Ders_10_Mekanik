@@ -13,6 +13,16 @@ public class DartController : MonoBehaviour
 
     public string stickTag = "DartBoard";
 
+    [Header("Scoring")]
+    [SerializeField]
+    private Transform dartTip;
+
+    [SerializeField]
+    private BoardScorer boardScorer;
+
+    [SerializeField]
+    private int lastScore;
+
     private float pitch;
     private float yaw;
     private float charge;
@@ -107,7 +117,7 @@ public class DartController : MonoBehaviour
         body.linearVelocity = Vector3.zero;
         body.angularVelocity = Vector3.zero;
         float force = Mathf.Lerp(minForce, maxForce, Mathf.Clamp01(charge));
-        body.AddForce(transform.forward * force);
+        body.AddForce(transform.forward * force, ForceMode.Impulse);
     }
 
     private void AlignWithVelocity()
@@ -136,6 +146,11 @@ public class DartController : MonoBehaviour
         body.angularVelocity = Vector3.zero;
         body.useGravity = false;
         body.isKinematic = true;
+
+        if (boardScorer != null && dartTip != null)
+        {
+            lastScore = boardScorer.ScoreTip(dartTip);
+        }
     }
 
     private void ResetDart()
@@ -165,4 +180,5 @@ public class DartController : MonoBehaviour
             angle += 360f;
         return angle;
     }
+
 }

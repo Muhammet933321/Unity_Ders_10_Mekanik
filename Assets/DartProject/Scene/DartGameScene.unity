@@ -129,6 +129,17 @@ Rigidbody:
   m_CorrespondingSourceObject: {fileID: 5860190978917532940, guid: 053e34aff05a6a0469a6c6e0feb00391, type: 3}
   m_PrefabInstance: {fileID: 5661570869218674579}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1017846037 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3145839437934743119, guid: b9f88e735d6ffc2429602abc7e3fd487, type: 3}
+  m_PrefabInstance: {fileID: 5449324169351945499}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39d933236b701d14799aea51efbb5555, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1708660719
 GameObject:
   m_ObjectHideFlags: 0
@@ -281,7 +292,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 53347154}
   targetBody: {fileID: 53347156}
-  offset: {x: 0, y: 1, z: -2}
+  offset: {x: 0, y: 0.19, z: -0.44}
   moveSpeed: 5
   turnSpeed: 7
   lookAhead: 2
@@ -529,15 +540,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6727889271084816784, guid: b9f88e735d6ffc2429602abc7e3fd487, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -0.008
       objectReference: {fileID: 0}
     - target: {fileID: 6727889271084816784, guid: b9f88e735d6ffc2429602abc7e3fd487, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.31
+      value: 2.114
       objectReference: {fileID: 0}
     - target: {fileID: 6727889271084816784, guid: b9f88e735d6ffc2429602abc7e3fd487, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 8.45
+      value: 0.595
       objectReference: {fileID: 0}
     - target: {fileID: 6727889271084816784, guid: b9f88e735d6ffc2429602abc7e3fd487, type: 3}
       propertyPath: m_LocalRotation.w
@@ -620,6 +631,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4233471223219566960, guid: 053e34aff05a6a0469a6c6e0feb00391, type: 3}
+      propertyPath: boardScorer
+      value: 
+      objectReference: {fileID: 1017846037}
     - target: {fileID: 6283656370706664987, guid: 053e34aff05a6a0469a6c6e0feb00391, type: 3}
       propertyPath: m_Name
       value: DartObj
